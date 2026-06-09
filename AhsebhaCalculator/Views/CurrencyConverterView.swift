@@ -128,42 +128,7 @@ struct CurrencyConverterView: View {
     private func inputsSection(proxy: ScrollViewProxy) -> some View {
         VStack(alignment: .center, spacing: 14) {
             amountInputCard
-            currencyInputCard(title: "من عملة", icon: "arrow.up.circle.fill", tint: Color.blue, background: sourceCardBackground, selection: $fromCurrency)
-
-            Button {
-                withAnimation(.spring(response: 0.28, dampingFraction: 0.72)) {
-                    swapButtonPressed = true
-                    swapCurrencies()
-                }
-                
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.18) {
-                    withAnimation(.spring(response: 0.28, dampingFraction: 0.82)) {
-                        swapButtonPressed = false
-                    }
-                }
-                
-                if parsedAmount != nil {
-                    Task {
-                        await calculateAndScroll(proxy: proxy)
-                    }
-                }
-            } label: {
-                Image(systemName: "arrow.up.arrow.down")
-                    .font(.system(size: 20, weight: .bold))
-                    .foregroundColor(AppTheme.buttonOrange)
-                    .frame(width: 52, height: 52)
-                    .background(AppTheme.buttonOrange.opacity(colorScheme == .light ? 0.12 : 0.18))
-                    .clipShape(Circle())
-                    .overlay(
-                        Circle()
-                            .stroke(AppTheme.buttonOrange.opacity(colorScheme == .light ? 0.18 : 0.28), lineWidth: 1)
-                    )
-                    .shadow(color: AppTheme.buttonOrange.opacity(colorScheme == .light ? 0.16 : 0.08), radius: 10, x: 0, y: 5)
-                    .scaleEffect(swapButtonPressed ? 0.92 : 1.0)
-            }
-            .buttonStyle(.plain)
-
-            currencyInputCard(title: "إلى عملة", icon: "arrow.down.circle.fill", tint: Color.green, background: targetCardBackground, selection: $toCurrency)
+            compactCurrencyRow(proxy: proxy)
 
             HStack(spacing: 12) {
                 Button {
@@ -187,6 +152,53 @@ struct CurrencyConverterView: View {
                 .disabled(isLoading)
             }
         }
+    }
+
+    private func compactCurrencyRow(proxy: ScrollViewProxy) -> some View {
+        ZStack {
+            HStack(spacing: 10) {
+                compactCurrencyInputCard(title: "من", tint: Color.blue, background: sourceCardBackground, selection: $fromCurrency)
+                compactCurrencyInputCard(title: "إلى", tint: Color.green, background: targetCardBackground, selection: $toCurrency)
+            }
+
+            swapButton(proxy: proxy)
+        }
+    }
+
+    private func swapButton(proxy: ScrollViewProxy) -> some View {
+        Button {
+            withAnimation(.spring(response: 0.28, dampingFraction: 0.72)) {
+                swapButtonPressed = true
+                swapCurrencies()
+            }
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.18) {
+                withAnimation(.spring(response: 0.28, dampingFraction: 0.82)) {
+                    swapButtonPressed = false
+                }
+            }
+
+            if parsedAmount != nil {
+                Task {
+                    await calculateAndScroll(proxy: proxy)
+                }
+            }
+        } label: {
+            Image(systemName: "arrow.left.arrow.right")
+                .font(.system(size: 18, weight: .bold))
+                .foregroundColor(AppTheme.buttonOrange)
+                .frame(width: 46, height: 46)
+                .background(AppTheme.buttonOrange.opacity(colorScheme == .light ? 0.13 : 0.20))
+                .clipShape(Circle())
+                .overlay(
+                    Circle()
+                        .stroke(AppTheme.buttonOrange.opacity(colorScheme == .light ? 0.20 : 0.30), lineWidth: 1)
+                )
+                .shadow(color: AppTheme.buttonOrange.opacity(colorScheme == .light ? 0.18 : 0.08), radius: 10, x: 0, y: 5)
+                .scaleEffect(swapButtonPressed ? 0.92 : 1.0)
+        }
+        .buttonStyle(.plain)
+        .zIndex(2)
     }
 
     private var amountInputCard: some View {
@@ -291,6 +303,79 @@ struct CurrencyConverterView: View {
                 .stroke(tint.opacity(colorScheme == .light ? 0.14 : 0.24), lineWidth: 1)
         )
         .shadow(color: cardShadow, radius: 10, x: 0, y: 5)
+    }
+
+    private func compactCurrencyInputCard(
+        title: String,
+        tint: Color,
+        background: Color,
+        selection: Binding<CurrencyInfo>
+    ) -> some View {
+        Menu {
+            Section("الأكثر استخدامًا") {
+                ForEach(CurrencyInfo.commonCurrencies) { currency in
+                    Button {
+                        selection.wrappedValue = currency
+                    } label: {
+                        currencyRowText(currency)
+                    }
+                }
+            }
+
+            Section("عملات أخرى") {
+                ForEach(CurrencyInfo.remainingCurrencies) { currency in
+                    Button {
+                        selection.wrappedValue = currency
+                    } label: {
+                        currencyRowText(currency)
+                    }
+                }
+            }
+        } label: {
+            VStack(alignment: .center, spacing: 8) {
+                Text(title)
+                    .font(.system(size: 13, weight: .bold, design: .rounded))
+                    .foregroundColor(tint)
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: .infinity, alignment: .center)
+
+                Text(selection.wrappedValue.flag)
+                    .font(.system(size: 24))
+                    .frame(height: 26)
+
+                Text(selection.wrappedValue.code)
+                    .font(.system(size: 22, weight: .black, design: .rounded))
+                    .foregroundColor(AppTheme.primaryText)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.80)
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: .infinity, alignment: .center)
+
+                Text(selection.wrappedValue.arabicName)
+                    .font(.system(size: 12, weight: .semibold, design: .rounded))
+                    .foregroundColor(AppTheme.secondaryText)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.62)
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: .infinity, alignment: .center)
+
+                Image(systemName: "chevron.down")
+                    .font(.system(size: 12, weight: .bold))
+                    .foregroundColor(tint)
+            }
+            .padding(.vertical, 13)
+            .padding(.horizontal, 10)
+            .frame(maxWidth: .infinity)
+            .frame(minHeight: 128)
+            .background(background)
+            .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 24, style: .continuous)
+                    .stroke(tint.opacity(colorScheme == .light ? 0.15 : 0.25), lineWidth: 1)
+            )
+            .shadow(color: cardShadow, radius: 8, x: 0, y: 4)
+        }
+        .buttonStyle(.plain)
     }
 
     private func currencyRowText(_ currency: CurrencyInfo) -> Text {

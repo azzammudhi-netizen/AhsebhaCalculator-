@@ -52,6 +52,12 @@ struct ToolsView: View {
             color: .orange
         ),
         ToolItem(
+            title: "حاسبة العملات الرقمية",
+            subtitle: "احسب قيمة البيتكوين والعملات الرقمية",
+            icon: "bitcoinsign.circle",
+            color: .purple
+        ),
+        ToolItem(
             title: "حاسبة نهاية الخدمة",
             subtitle: "احسب مكافأة نهاية الخدمة وفق نظام العمل السعودي",
             icon: "briefcase.fill",
@@ -178,7 +184,7 @@ struct ToolsView: View {
                             }
                             
                             if !recentTools.isEmpty {
-                                toolSection(title: "آخر استخداماتك", icon: "clock.fill", tools: recentTools)
+                                toolSection(title: "آخر استخداماتك", icon: "clock.fill", tools: recentTools, usesCompactGrid: false)
                             }
                             
                             toolSection(title: "الحاسبات التعليمية", icon: "graduationcap.fill", tools: educationTools)
@@ -297,8 +303,12 @@ struct ToolsView: View {
             }
             .frame(maxWidth: .infinity, alignment: .trailing)
             
-            ForEach(favoriteTools) { tool in
-                toolCard(for: tool)
+            if favoriteTools.count >= 3 {
+                toolGrid(favoriteTools)
+            } else {
+                ForEach(favoriteTools) { tool in
+                    horizontalToolCard(for: tool)
+                }
             }
         }
         .padding(18)
@@ -314,15 +324,17 @@ struct ToolsView: View {
         .shadow(color: colorScheme == .light ? Color.black.opacity(0.055) : Color.clear, radius: 10, x: 0, y: 5)
     }
     
-    private func toolSection(title: String, icon: String, tools: [ToolItem]) -> some View {
+    private func toolSection(title: String, icon: String, tools: [ToolItem], usesCompactGrid: Bool = true) -> some View {
         VStack(alignment: .trailing, spacing: 16) {
             sectionTitle(title, icon: icon)
             
             if tools.isEmpty {
                 emptySearchState
+            } else if usesCompactGrid {
+                toolGrid(tools)
             } else {
                 ForEach(tools) { tool in
-                    toolCard(for: tool)
+                    horizontalToolCard(for: tool)
                 }
             }
         }
@@ -341,6 +353,21 @@ struct ToolsView: View {
                 }
             }
         )
+    }
+
+    private func toolGrid(_ tools: [ToolItem]) -> some View {
+        LazyVGrid(
+            columns: [
+                GridItem(.flexible(), spacing: 12),
+                GridItem(.flexible(), spacing: 12)
+            ],
+            spacing: 12
+        ) {
+            ForEach(tools) { tool in
+                compactToolCard(for: tool)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .center)
     }
     
     private func sectionTitle(_ title: String, icon: String) -> some View {
@@ -378,6 +405,208 @@ struct ToolsView: View {
                 recordToolUse(tool)
             }
         )
+    }
+
+    private func horizontalToolCard(for tool: ToolItem) -> some View {
+        HStack(spacing: 12) {
+            favoriteButton(for: tool, size: 38, iconSize: 16)
+
+            NavigationLink {
+                destinationView(for: tool)
+            } label: {
+                HStack(spacing: 12) {
+                    VStack(alignment: .trailing, spacing: 4) {
+                        Text(tool.title)
+                            .font(.system(size: 15, weight: .bold, design: .rounded))
+                            .foregroundColor(AppTheme.primaryText)
+                            .multilineTextAlignment(.trailing)
+                            .lineLimit(2)
+                            .minimumScaleFactor(0.78)
+
+                        Text(tool.subtitle)
+                            .font(.system(size: 13, weight: .regular, design: .rounded))
+                            .foregroundColor(AppTheme.secondaryText)
+                            .multilineTextAlignment(.trailing)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.72)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 15, style: .continuous)
+                            .fill(tool.color.opacity(colorScheme == .light ? 0.16 : 0.22))
+                            .frame(width: 56, height: 56)
+
+                        Image(systemName: tool.icon)
+                            .font(.system(size: 23, weight: .semibold))
+                            .foregroundColor(tool.color)
+                    }
+                }
+                .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.plain)
+            .simultaneousGesture(
+                TapGesture().onEnded {
+                    recordToolUse(tool)
+                }
+            )
+        }
+        .padding(.vertical, 12)
+        .padding(.horizontal, 14)
+        .frame(maxWidth: .infinity)
+        .frame(minHeight: 88)
+        .background(horizontalToolCardBackground(for: tool))
+        .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                .stroke(horizontalToolCardBorder(for: tool), lineWidth: 1)
+        )
+        .shadow(color: colorScheme == .light ? Color.black.opacity(0.055) : Color.clear, radius: 7, x: 0, y: 3)
+        .environment(\.layoutDirection, .leftToRight)
+    }
+
+    private func compactToolCard(for tool: ToolItem) -> some View {
+        ZStack(alignment: .topLeading) {
+            NavigationLink {
+                destinationView(for: tool)
+            } label: {
+                VStack(alignment: .center, spacing: 7) {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 15, style: .continuous)
+                            .fill(tool.color.opacity(colorScheme == .light ? 0.14 : 0.20))
+                            .frame(width: 48, height: 48)
+
+                        Image(systemName: tool.icon)
+                            .font(.system(size: 21, weight: .bold))
+                            .foregroundColor(tool.color)
+                    }
+
+                    Text(tool.title)
+                        .font(.system(size: 13, weight: .black, design: .rounded))
+                        .foregroundColor(AppTheme.primaryText)
+                        .multilineTextAlignment(.center)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.68)
+                        .frame(maxWidth: .infinity, minHeight: 32, alignment: .center)
+
+                    Text(tool.subtitle)
+                        .font(.system(size: 10, weight: .medium, design: .rounded))
+                        .foregroundColor(AppTheme.secondaryText)
+                        .multilineTextAlignment(.center)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.65)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                }
+                .padding(.top, 15)
+                .padding(.horizontal, 9)
+                .padding(.bottom, 10)
+                .frame(maxWidth: .infinity)
+                .frame(height: 130)
+                .background(compactToolCardBackground(for: tool))
+                .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 24, style: .continuous)
+                        .stroke(compactToolCardBorder(for: tool), lineWidth: 1)
+                )
+                .shadow(color: colorScheme == .light ? Color.black.opacity(0.055) : Color.clear, radius: 8, x: 0, y: 4)
+            }
+            .buttonStyle(.plain)
+            .simultaneousGesture(
+                TapGesture().onEnded {
+                    recordToolUse(tool)
+                }
+            )
+
+            Button {
+                toggleFavorite(tool)
+            } label: {
+                favoriteIcon(for: tool, size: 30, iconSize: 13)
+            }
+            .buttonStyle(.plain)
+            .padding(8)
+        }
+        .environment(\.layoutDirection, .rightToLeft)
+    }
+
+    private func favoriteButton(for tool: ToolItem, size: CGFloat, iconSize: CGFloat) -> some View {
+        Button {
+            toggleFavorite(tool)
+        } label: {
+            favoriteIcon(for: tool, size: size, iconSize: iconSize)
+        }
+        .buttonStyle(.plain)
+    }
+
+    private func favoriteIcon(for tool: ToolItem, size: CGFloat, iconSize: CGFloat) -> some View {
+        Image(systemName: favoriteToolTitles.contains(tool.title) ? "star.fill" : "star")
+            .font(.system(size: iconSize, weight: .bold))
+            .foregroundColor(favoriteToolTitles.contains(tool.title) ? tool.color : tool.color.opacity(0.65))
+            .frame(width: size, height: size)
+            .background(
+                Circle()
+                    .fill(tool.color.opacity(colorScheme == .light ? 0.12 : 0.18))
+            )
+            .overlay(
+                Circle()
+                    .stroke(tool.color.opacity(colorScheme == .light ? 0.20 : 0.28), lineWidth: 1)
+            )
+    }
+
+    private func compactToolCardBackground(for tool: ToolItem) -> Color {
+        colorScheme == .light ? tool.color.opacity(0.065) : AppTheme.secondaryBackground
+    }
+
+    private func compactToolCardBorder(for tool: ToolItem) -> Color {
+        colorScheme == .light ? tool.color.opacity(0.16) : tool.color.opacity(0.24)
+    }
+
+    private func horizontalToolCardBackground(for tool: ToolItem) -> Color {
+        colorScheme == .light ? tool.color.opacity(0.055) : AppTheme.secondaryBackground
+    }
+
+    private func horizontalToolCardBorder(for tool: ToolItem) -> Color {
+        colorScheme == .light ? tool.color.opacity(0.14) : tool.color.opacity(0.22)
+    }
+
+    @ViewBuilder
+    private func destinationView(for tool: ToolItem) -> some View {
+        if tool.title == "حاسبة المعدل التراكمي" {
+            GPACalculatorView()
+        } else if tool.title == "حاسبة النسبة الموزونة" {
+            WeightedPercentageView()
+        } else if tool.title == "حاسبة النسبة المئوية" {
+            PercentageCalculatorView()
+        } else if tool.title == "حاسبة الخصم" {
+            DiscountCalculatorView()
+        } else if tool.title == "حاسبة الضريبة" {
+            VATCalculatorView()
+        } else if tool.title == "حاسبة التمويل الشخصي" {
+            PersonalLoanCalculatorView()
+        } else if tool.title == "حاسبة التمويل العقاري" {
+            MortgageCalculatorView()
+        } else if tool.title == "محول العملات" {
+            CurrencyConverterView()
+        } else if tool.title == "حاسبة الذهب والفضة" {
+            GoldSilverCalculatorView()
+        } else if tool.title == "حاسبة العملات الرقمية" {
+            CryptoCalculatorView()
+        } else if tool.title == "حاسبة نهاية الخدمة" {
+            EndOfServiceCalculatorView()
+        } else if tool.title == "حاسبة التقاعد المدني" {
+            CivilRetirementCalculatorView()
+        } else if tool.title == "حاسبة التقاعد العسكري" {
+            MilitaryRetirementCalculatorView()
+        } else if tool.title == "حاسبة العمر" {
+            AgeCalculatorView()
+        } else if tool.title == "تحويل أسماء الأشهر" {
+            MonthNamesConverterView()
+        } else if tool.title == "تحويل التاريخ" {
+            DateConverterView()
+        } else if tool.title == "حاسبة الفرق بين تاريخين" {
+            DateDifferenceCalculatorView()
+        } else {
+            ToolComingSoonView(tool: tool)
+        }
     }
     
     private var ahsebhaCard: some View {
@@ -601,6 +830,9 @@ struct ToolsView: View {
             
         case "حاسبة الذهب والفضة":
             return "ذهب فضة سعر الذهب سعر الفضة جرام ذهب اونصة ذهب جرام فضة اونصة فضة عيار قيراط سبائك gold silver xau xag precious metals"
+            
+        case "حاسبة العملات الرقمية":
+            return "عملات رقمية كريبتو بيتكوين ايثريوم سولانا بي ان بي ريبل bitcoin ethereum solana bnb xrp crypto cryptocurrency coingecko btc eth sol"
 
         case "حاسبة نهاية الخدمة":
             return "نهاية الخدمة مكافأة نهاية الخدمة حقوق العامل حقوق الموظف نظام العمل السعودي استقالة انتهاء عقد انهاء عقد عقد محدد غير محدد راتب اجر فعلي وزارة الموارد البشرية قوى labor end service benefit eosb resignation termination"

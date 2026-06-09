@@ -177,8 +177,9 @@ struct DateDifferenceCalculatorView: View {
                 .frame(maxWidth: .infinity, alignment: .center)
 
             if isDatePickerExpanded {
-                datePickerBlock(title: "تاريخ البداية", selection: $startDate, tint: Color.indigo)
-                datePickerBlock(title: "تاريخ النهاية", selection: $endDate, tint: AppTheme.buttonOrange)
+                compactDateSummaryRow
+                datePickerBlock(title: "تاريخ البداية", icon: "play.circle.fill", selection: $startDate, tint: Color.indigo)
+                datePickerBlock(title: "تاريخ النهاية", icon: "flag.checkered.circle.fill", selection: $endDate, tint: AppTheme.buttonOrange)
             } else {
                 collapsedDateSummary
             }
@@ -193,17 +194,31 @@ struct DateDifferenceCalculatorView: View {
         .shadow(color: cardShadow, radius: colorScheme == .light ? 10 : 0, x: 0, y: colorScheme == .light ? 5 : 0)
     }
 
-    private func datePickerBlock(title: String, selection: Binding<Date>, tint: Color) -> some View {
-        VStack(alignment: .center, spacing: 10) {
-            Text(title)
-                .font(.system(size: 17, weight: .bold, design: .rounded))
-                .foregroundColor(AppTheme.primaryText)
-                .multilineTextAlignment(.center)
-                .frame(maxWidth: .infinity, alignment: .center)
+    private func datePickerBlock(title: String, icon: String, selection: Binding<Date>, tint: Color) -> some View {
+        VStack(alignment: .center, spacing: 8) {
+            VStack(alignment: .center, spacing: 5) {
+                Image(systemName: icon)
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundColor(tint)
+
+                Text(title)
+                    .font(.system(size: 14, weight: .bold, design: .rounded))
+                    .foregroundColor(AppTheme.primaryText)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.7)
+                    .frame(maxWidth: .infinity, alignment: .center)
+
+                Text(selectedCalendar.shortTitle)
+                    .font(.system(size: 11, weight: .semibold, design: .rounded))
+                    .foregroundColor(AppTheme.secondaryText)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.75)
+            }
 
             ZStack {
                 RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .fill(cardBackground)
+                    .fill(tint.opacity(colorScheme == .light ? 0.07 : 0.12))
                     .overlay(
                         RoundedRectangle(cornerRadius: 18, style: .continuous)
                             .stroke(tint.opacity(colorScheme == .light ? 0.16 : 0.24), lineWidth: 1)
@@ -228,12 +243,19 @@ struct DateDifferenceCalculatorView: View {
             .frame(height: 150)
             .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
         }
+        .padding(10)
+        .frame(maxWidth: .infinity, alignment: .center)
+        .background(tint.opacity(colorScheme == .light ? 0.055 : 0.10))
+        .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 22, style: .continuous)
+                .stroke(tint.opacity(colorScheme == .light ? 0.18 : 0.28), lineWidth: 1)
+        )
     }
 
     private var collapsedDateSummary: some View {
         VStack(spacing: 12) {
-            compactDateRow(title: "تاريخ البداية", date: startDate, tint: Color.indigo)
-            compactDateRow(title: "تاريخ النهاية", date: endDate, tint: AppTheme.buttonOrange)
+            compactDateSummaryRow
             
             Button {
                 withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
@@ -263,36 +285,60 @@ struct DateDifferenceCalculatorView: View {
         }
         .transition(.opacity.combined(with: .move(edge: .top)))
     }
+
+    private var compactDateSummaryRow: some View {
+        HStack(alignment: .top, spacing: 10) {
+            compactDateRow(title: "تاريخ البداية", icon: "play.circle.fill", date: startDate, tint: Color.indigo)
+            compactDateRow(title: "تاريخ النهاية", icon: "flag.checkered.circle.fill", date: endDate, tint: AppTheme.buttonOrange)
+        }
+        .frame(maxWidth: .infinity, alignment: .center)
+    }
     
-    private func compactDateRow(title: String, date: Date, tint: Color) -> some View {
-        VStack(alignment: .center, spacing: 5) {
+    private func compactDateRow(title: String, icon: String, date: Date, tint: Color) -> some View {
+        VStack(alignment: .center, spacing: 6) {
+            Image(systemName: icon)
+                .font(.system(size: 18, weight: .bold))
+                .foregroundColor(tint)
+
             Text(title)
-                .font(.system(size: 13, weight: .semibold, design: .rounded))
-                .foregroundColor(AppTheme.secondaryText)
-                .multilineTextAlignment(.center)
-                .frame(maxWidth: .infinity, alignment: .center)
-            
-            Text(formatDate(date))
-                .font(.system(size: 15, weight: .bold, design: .rounded))
+                .font(.system(size: 13, weight: .bold, design: .rounded))
                 .foregroundColor(AppTheme.primaryText)
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
-                .minimumScaleFactor(0.7)
+                .minimumScaleFactor(0.75)
+                .frame(maxWidth: .infinity, alignment: .center)
+
+            Text(selectedCalendar.shortTitle)
+                .font(.system(size: 11, weight: .semibold, design: .rounded))
+                .foregroundColor(AppTheme.secondaryText)
+                .lineLimit(1)
+                .minimumScaleFactor(0.75)
+            
+            Text(formatDate(date))
+                .font(.system(size: 13, weight: .bold, design: .rounded))
+                .foregroundColor(AppTheme.primaryText)
+                .multilineTextAlignment(.center)
+                .lineLimit(3)
+                .minimumScaleFactor(0.62)
                 .frame(maxWidth: .infinity, alignment: .center)
             
             Text(formatNumericDate(date))
-                .font(.system(size: 14, weight: .bold, design: .rounded))
+                .font(.system(size: 13, weight: .bold, design: .rounded))
                 .foregroundColor(tint)
                 .multilineTextAlignment(.center)
+                .lineLimit(1)
+                .minimumScaleFactor(0.70)
                 .frame(maxWidth: .infinity, alignment: .center)
                 .environment(\.layoutDirection, .leftToRight)
         }
-        .padding(12)
-        .background(cardBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .padding(.vertical, 11)
+        .padding(.horizontal, 8)
+        .frame(maxWidth: .infinity, minHeight: 132, alignment: .center)
+        .background(tint.opacity(colorScheme == .light ? 0.065 : 0.12))
+        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .stroke(tint.opacity(colorScheme == .light ? 0.14 : 0.24), lineWidth: 1)
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .stroke(tint.opacity(colorScheme == .light ? 0.18 : 0.28), lineWidth: 1)
         )
     }
 

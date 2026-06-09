@@ -447,19 +447,21 @@ struct PersonalLoanCalculatorView: View {
     }
 
     private func mainResultCard(title: String, value: String) -> some View {
-        HStack(spacing: 12) {
+        VStack(spacing: 8) {
+            Text(title)
+                .font(.system(size: 18, weight: .bold, design: .rounded))
+                .foregroundColor(AppTheme.primaryText)
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity, alignment: .center)
+
             Text(value)
                 .font(.system(size: 30, weight: .black, design: .rounded))
                 .foregroundColor(AppTheme.buttonOrange)
                 .lineLimit(1)
-                .minimumScaleFactor(0.65)
-            
-            Spacer()
-            
-            Text(title)
-                .font(.system(size: 18, weight: .bold, design: .rounded))
-                .foregroundColor(AppTheme.primaryText)
-                .multilineTextAlignment(.trailing)
+                .minimumScaleFactor(0.45)
+                .allowsTightening(false)
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity, alignment: .center)
         }
         .padding(18)
         .background(
@@ -470,7 +472,6 @@ struct PersonalLoanCalculatorView: View {
                         .stroke(AppTheme.buttonOrange.opacity(0.26), lineWidth: 1)
                 )
         )
-        .environment(\.layoutDirection, .leftToRight)
     }
     
     private func resultLine(title: String, value: String) -> some View {
@@ -478,8 +479,10 @@ struct PersonalLoanCalculatorView: View {
             Text(value)
                 .font(.system(size: 16, weight: .bold, design: .rounded))
                 .foregroundColor(AppTheme.primaryText)
-                .lineLimit(1)
-                .minimumScaleFactor(0.75)
+                .lineLimit(2)
+                .minimumScaleFactor(0.70)
+                .fixedSize(horizontal: false, vertical: true)
+                .multilineTextAlignment(.leading)
             
             Spacer()
             
@@ -742,13 +745,20 @@ struct PersonalLoanCalculatorView: View {
     }
     
     private func formatCurrency(_ value: Double) -> String {
+        guard value.isFinite else {
+            return "٠ ر.س"
+        }
+
         let formatter = NumberFormatter()
         formatter.locale = Locale(identifier: "ar_SA")
         formatter.numberStyle = .decimal
+        formatter.usesGroupingSeparator = true
         formatter.maximumFractionDigits = 2
         formatter.minimumFractionDigits = 0
+        formatter.roundingMode = .halfUp
         
-        let formatted = formatter.string(from: NSNumber(value: value)) ?? "\(value)"
+        let fallback = String(format: "%.2f", value)
+        let formatted = formatter.string(from: NSNumber(value: value)) ?? fallback
         return "\(formatted) ر.س"
     }
     

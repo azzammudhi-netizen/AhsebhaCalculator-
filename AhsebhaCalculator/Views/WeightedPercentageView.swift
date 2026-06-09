@@ -191,9 +191,24 @@ struct WeightedPercentageView: View {
 
     private var scoresCard: some View {
         inputCard(title: "الدرجات") {
-            WeightedInputField(title: "الثانوية", placeholder: "95", value: $highSchoolScore)
-            WeightedInputField(title: "القدرات", placeholder: "85", value: $aptitudeScore)
-            WeightedInputField(title: "التحصيلي", placeholder: "90", value: $achievementScore)
+            WeightedInputField(
+                title: "الثانوية",
+                scorePlaceholder: "95",
+                scoreValue: $highSchoolScore,
+                weightValue: $highSchoolWeight
+            )
+            WeightedInputField(
+                title: "القدرات",
+                scorePlaceholder: "85",
+                scoreValue: $aptitudeScore,
+                weightValue: $aptitudeWeight
+            )
+            WeightedInputField(
+                title: "التحصيلي",
+                scorePlaceholder: "90",
+                scoreValue: $achievementScore,
+                weightValue: $achievementWeight
+            )
         }
     }
 
@@ -210,12 +225,6 @@ struct WeightedPercentageView: View {
                 .foregroundColor(totalWeight == 100 ? .green : AppTheme.buttonOrange)
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: .infinity, alignment: .center)
-
-            VStack(alignment: .center, spacing: 12) {
-                WeightedSmallInputField(title: "الثانوية", value: $highSchoolWeight)
-                WeightedSmallInputField(title: "القدرات", value: $aptitudeWeight)
-                WeightedSmallInputField(title: "التحصيلي", value: $achievementWeight)
-            }
 
             Button {
                 resetDefaultWeights()
@@ -539,37 +548,79 @@ struct WeightedInputField: View {
     @Environment(\.colorScheme) private var colorScheme
 
     let title: String
-    let placeholder: String
-    @Binding var value: String
+    let scorePlaceholder: String
+    @Binding var scoreValue: String
+    @Binding var weightValue: String
 
     var body: some View {
-        VStack(alignment: .center, spacing: 8) {
+        VStack(alignment: .center, spacing: 10) {
             Text(title)
-                .font(.system(size: 14, weight: .semibold, design: .rounded))
-                .foregroundColor(AppTheme.secondaryText)
+                .font(.system(size: 15, weight: .bold, design: .rounded))
+                .foregroundColor(AppTheme.primaryText)
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: .infinity, alignment: .center)
 
-            TextField(
-                "",
-                text: $value,
-                prompt: Text(placeholder)
-                    .foregroundColor(AppTheme.secondaryText.opacity(0.65))
-            )
-            .keyboardType(.decimalPad)
-            .multilineTextAlignment(.center)
-            .font(.system(size: 20, weight: .bold, design: .rounded))
-            .foregroundColor(AppTheme.primaryText)
-            .tint(AppTheme.buttonOrange)
-            .lineLimit(1)
-            .minimumScaleFactor(0.7)
-            .padding(.horizontal, 12)
-            .frame(height: 56)
+            HStack(alignment: .center, spacing: 10) {
+                compactField(title: "الدرجة", placeholder: scorePlaceholder, value: $scoreValue)
+                compactField(title: "الوزن", placeholder: "30", value: $weightValue, suffix: "%")
+            }
+        }
+        .padding(12)
+        .background(
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .fill(colorScheme == .light ? AppTheme.buttonOrange.opacity(0.055) : AppTheme.secondaryBackground)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20, style: .continuous)
+                        .stroke(colorScheme == .light ? AppTheme.buttonOrange.opacity(0.12) : AppTheme.border, lineWidth: 1)
+                )
+        )
+        .frame(maxWidth: .infinity, alignment: .center)
+    }
+
+    private func compactField(
+        title: String,
+        placeholder: String,
+        value: Binding<String>,
+        suffix: String? = nil
+    ) -> some View {
+        VStack(alignment: .center, spacing: 6) {
+            Text(title)
+                .font(.system(size: 12, weight: .semibold, design: .rounded))
+                .foregroundColor(AppTheme.secondaryText)
+                .multilineTextAlignment(.center)
+                .lineLimit(1)
+                .minimumScaleFactor(0.75)
+                .frame(maxWidth: .infinity, alignment: .center)
+
+            HStack(spacing: 4) {
+                TextField(
+                    "",
+                    text: value,
+                    prompt: Text(placeholder)
+                        .foregroundColor(AppTheme.secondaryText.opacity(0.65))
+                )
+                .keyboardType(.decimalPad)
+                .multilineTextAlignment(.center)
+                .font(.system(size: 18, weight: .bold, design: .rounded))
+                .foregroundColor(AppTheme.primaryText)
+                .tint(AppTheme.buttonOrange)
+                .lineLimit(1)
+                .minimumScaleFactor(0.55)
+
+                if let suffix {
+                    Text(suffix)
+                        .font(.system(size: 13, weight: .bold, design: .rounded))
+                        .foregroundColor(AppTheme.secondaryText)
+                        .lineLimit(1)
+                }
+            }
+            .padding(.horizontal, 8)
+            .frame(height: 48)
             .background(
-                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                RoundedRectangle(cornerRadius: 15, style: .continuous)
                     .fill(colorScheme == .light ? Color.white : AppTheme.inputBackground)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 18, style: .continuous)
+                        RoundedRectangle(cornerRadius: 15, style: .continuous)
                             .stroke(colorScheme == .light ? Color.black.opacity(0.08) : AppTheme.border, lineWidth: 1)
                     )
             )

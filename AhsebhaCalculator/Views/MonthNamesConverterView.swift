@@ -173,16 +173,8 @@ struct MonthNamesConverterView: View {
         MonthNamesConversionResult(month: selectedMonth)
     }
 
-    private var monthNumberText: String {
-        formatMonthNumber(selectedMonth.number)
-    }
-
     private var pageBackground: Color {
         colorScheme == .light ? Color(hex: "#F7F9FC") : AppTheme.background
-    }
-
-    private var resultCardBackground: Color {
-        colorScheme == .light ? Color(hex: "#F7F5FF") : AppTheme.secondaryBackground
     }
 
     private var pickerCardBackground: Color {
@@ -229,7 +221,6 @@ struct MonthNamesConverterView: View {
                 VStack(alignment: .center, spacing: 20) {
                     headerSection
                     pickerCard
-                    resultCard
                     namesGrid
                     shareSection
                     noteCard
@@ -317,54 +308,6 @@ struct MonthNamesConverterView: View {
         .shadow(color: cardShadow, radius: colorScheme == .light ? 8 : 0, x: 0, y: colorScheme == .light ? 3 : 0)
     }
     
-    private var resultCard: some View {
-        VStack(alignment: .center, spacing: 10) {
-            Text("الشهر المحدد")
-                .font(.system(size: 18, weight: .bold, design: .rounded))
-                .foregroundColor(AppTheme.primaryText)
-                .multilineTextAlignment(.center)
-                .frame(maxWidth: .infinity, alignment: .center)
-
-            Text(selectedMonth.gregorianArabic)
-                .font(.system(size: 48, weight: .black, design: .rounded))
-                .foregroundColor(AppTheme.buttonOrange)
-                .minimumScaleFactor(0.5)
-                .lineLimit(1)
-                .multilineTextAlignment(.center)
-                .frame(maxWidth: .infinity, alignment: .center)
-
-            Text(selectedMonth.gregorianEnglish)
-                .font(.system(size: 20, weight: .semibold, design: .rounded))
-                .foregroundColor(AppTheme.secondaryText)
-                .multilineTextAlignment(.center)
-                .frame(maxWidth: .infinity, alignment: .center)
-
-            Text("رقم الشهر: \(monthNumberText)")
-                .font(.system(size: 16, weight: .bold, design: .rounded))
-                .foregroundColor(AppTheme.primaryText)
-                .multilineTextAlignment(.center)
-                .frame(maxWidth: .infinity, alignment: .center)
-                .padding(.vertical, 9)
-                .padding(.horizontal, 14)
-            .background(
-                Capsule(style: .continuous)
-                    .fill(AppTheme.buttonOrange.opacity(colorScheme == .light ? 0.08 : 0.13))
-                    .overlay(
-                        Capsule(style: .continuous)
-                            .stroke(AppTheme.buttonOrange.opacity(0.20), lineWidth: 1)
-                    )
-            )
-        }
-        .padding(20)
-        .background(resultCardBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 30, style: .continuous)
-                .stroke(Color.indigo.opacity(colorScheme == .light ? 0.18 : 0.26), lineWidth: 1)
-        )
-        .shadow(color: cardShadow, radius: colorScheme == .light ? 10 : 0, x: 0, y: colorScheme == .light ? 5 : 0)
-    }
-    
     private var shareSection: some View {
         let generatedImage = resultCardImage(for: result)
         
@@ -386,21 +329,41 @@ struct MonthNamesConverterView: View {
     }
     
     private var namesGrid: some View {
-        VStack(alignment: .trailing, spacing: 12) {
+        VStack(alignment: .center, spacing: 12) {
             Text("الأسماء المقابلة")
                 .font(.system(size: 22, weight: .bold, design: .rounded))
                 .foregroundColor(AppTheme.primaryText)
-                .frame(maxWidth: .infinity, alignment: .trailing)
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity, alignment: .center)
             
-            MonthNameRow(title: "السرياني / الشامي", value: selectedMonth.syriac, color: .blue)
-            MonthNameRow(title: "المغرب العربي", value: selectedMonth.maghreb, color: .orange)
-            MonthNameRow(title: "الأمازيغي", value: selectedMonth.amazigh, color: .green)
-            MonthNameRow(title: "القبطي", value: selectedMonth.coptic, color: .purple)
-            MonthNameRow(title: "البابلي / الآشوري", value: selectedMonth.babylonian, color: .teal)
-            MonthNameRow(title: "الفارسي", value: selectedMonth.persian, color: .pink)
-            MonthNameRow(title: "التركي", value: selectedMonth.turkish, color: .cyan)
-            MonthNameRow(title: "اليمني القديم", value: selectedMonth.oldYemeni, color: .yellow)
+            LazyVGrid(
+                columns: [
+                    GridItem(.flexible(), spacing: 8),
+                    GridItem(.flexible(), spacing: 8),
+                    GridItem(.flexible(), spacing: 8)
+                ],
+                spacing: 8
+            ) {
+                MonthNameRow(title: "السرياني", value: selectedMonth.syriac, color: .blue)
+                MonthNameRow(title: "المغرب", value: selectedMonth.maghreb, color: .orange)
+                MonthNameRow(title: "الأمازيغي", value: selectedMonth.amazigh, color: .green)
+                MonthNameRow(title: "القبطي", value: selectedMonth.coptic, color: .purple)
+                MonthNameRow(title: "البابلي", value: selectedMonth.babylonian, color: .teal)
+                MonthNameRow(title: "الفارسي", value: selectedMonth.persian, color: .pink)
+                MonthNameRow(title: "التركي", value: selectedMonth.turkish, color: .cyan)
+                MonthNameRow(title: "اليمني", value: selectedMonth.oldYemeni, color: .yellow)
+            }
         }
+        .padding(14)
+        .background(
+            RoundedRectangle(cornerRadius: 26, style: .continuous)
+                .fill(colorScheme == .light ? Color(hex: "#FBFCFF") : AppTheme.secondaryBackground)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 26, style: .continuous)
+                        .stroke(cardBorder, lineWidth: 1)
+                )
+        )
+        .shadow(color: cardShadow, radius: colorScheme == .light ? 8 : 0, x: 0, y: colorScheme == .light ? 4 : 0)
     }
     
     private var noteCard: some View {
@@ -479,39 +442,35 @@ struct MonthNameRow: View {
     let color: Color
     
     var body: some View {
-        HStack(spacing: 14) {
-            VStack(alignment: .leading, spacing: 3) {
-                Text(value)
-                    .font(.system(size: 20, weight: .bold, design: .rounded))
-                    .foregroundColor(AppTheme.primaryText)
-                
-                Text(title)
-                    .font(.system(size: 13, weight: .regular, design: .rounded))
-                    .foregroundColor(AppTheme.secondaryText)
-            }
-            
-            Spacer()
-            
-            ZStack {
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .fill(color.opacity(0.18))
-                    .frame(width: 52, height: 52)
-                
-                Image(systemName: "calendar")
-                    .font(.system(size: 21, weight: .semibold))
-                    .foregroundColor(color)
-            }
+        VStack(alignment: .center, spacing: 6) {
+            Text(title)
+                .font(.system(size: 11, weight: .semibold, design: .rounded))
+                .foregroundColor(color)
+                .multilineTextAlignment(.center)
+                .lineLimit(2)
+                .minimumScaleFactor(0.65)
+                .frame(maxWidth: .infinity, alignment: .center)
+
+            Text(value)
+                .font(.system(size: 16, weight: .black, design: .rounded))
+                .foregroundColor(AppTheme.primaryText)
+                .multilineTextAlignment(.center)
+                .lineLimit(2)
+                .minimumScaleFactor(0.55)
+                .frame(maxWidth: .infinity, alignment: .center)
         }
-        .padding(16)
+        .padding(.vertical, 10)
+        .padding(.horizontal, 6)
+        .frame(maxWidth: .infinity, minHeight: 76, alignment: .center)
         .background(
-            RoundedRectangle(cornerRadius: 24, style: .continuous)
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
                 .fill(color.opacity(colorScheme == .light ? 0.075 : 0.11))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 24, style: .continuous)
+                    RoundedRectangle(cornerRadius: 18, style: .continuous)
                         .stroke(color.opacity(colorScheme == .light ? 0.20 : 0.28), lineWidth: 1)
                 )
         )
-        .shadow(color: colorScheme == .light ? color.opacity(0.06) : .clear, radius: colorScheme == .light ? 7 : 0, x: 0, y: colorScheme == .light ? 3 : 0)
+        .shadow(color: colorScheme == .light ? color.opacity(0.05) : .clear, radius: colorScheme == .light ? 5 : 0, x: 0, y: colorScheme == .light ? 2 : 0)
     }
 }
 

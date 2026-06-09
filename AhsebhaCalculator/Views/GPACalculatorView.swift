@@ -248,11 +248,12 @@ struct GPACalculatorView: View {
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: .infinity, alignment: .center)
 
-            VStack(alignment: .center, spacing: 12) {
+            HStack(alignment: .center, spacing: 8) {
                 GPAWeightInputField(title: "أول ثانوي", value: $yearOneWeight)
                 GPAWeightInputField(title: "ثاني ثانوي", value: $yearTwoWeight)
                 GPAWeightInputField(title: "ثالث ثانوي", value: $yearThreeWeight)
             }
+            .frame(maxWidth: .infinity, alignment: .center)
 
             Button {
                 resetDefaultWeights()
@@ -721,30 +722,33 @@ private struct GPAWeightInputField: View {
     var body: some View {
         VStack(alignment: .center, spacing: 8) {
             Text(title)
-                .font(.system(size: 14, weight: .semibold, design: .rounded))
+                .font(.system(size: 12, weight: .semibold, design: .rounded))
                 .foregroundColor(AppTheme.secondaryText)
                 .multilineTextAlignment(.center)
+                .lineLimit(1)
+                .minimumScaleFactor(0.65)
                 .frame(maxWidth: .infinity, alignment: .center)
 
             TextField("", text: $value)
                 .keyboardType(.decimalPad)
                 .multilineTextAlignment(.center)
-                .font(.system(size: 20, weight: .bold, design: .rounded))
+                .font(.system(size: 18, weight: .bold, design: .rounded))
                 .foregroundColor(AppTheme.primaryText)
                 .tint(AppTheme.buttonOrange)
                 .lineLimit(1)
-                .minimumScaleFactor(0.7)
-                .padding(.horizontal, 12)
-                .frame(height: 56)
+                .minimumScaleFactor(0.55)
+                .padding(.horizontal, 6)
+                .frame(height: 48)
                 .background(
-                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    RoundedRectangle(cornerRadius: 15, style: .continuous)
                         .fill(colorScheme == .light ? Color.white : AppTheme.inputBackground)
                         .overlay(
-                            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                            RoundedRectangle(cornerRadius: 15, style: .continuous)
                                 .stroke(colorScheme == .light ? Color.black.opacity(0.08) : AppTheme.border, lineWidth: 1)
                         )
                 )
         }
+        .layoutPriority(1)
         .frame(maxWidth: .infinity, alignment: .center)
     }
 }
