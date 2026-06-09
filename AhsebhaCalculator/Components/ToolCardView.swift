@@ -126,6 +126,10 @@ struct ToolCardView: View {
             PersonalLoanCalculatorView()
         } else if tool.title == "حاسبة التمويل العقاري" {
             MortgageCalculatorView()
+        } else if tool.title == "محول العملات" {
+            CurrencyConverterView()
+        } else if tool.title == "حاسبة الذهب والفضة" {
+            GoldSilverCalculatorView()
         } else if tool.title == "حاسبة نهاية الخدمة" {
             EndOfServiceCalculatorView()
         } else if tool.title == "حاسبة التقاعد المدني" {

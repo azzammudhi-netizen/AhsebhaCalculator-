@@ -40,6 +40,18 @@ struct ToolsView: View {
             color: .blue
         ),
         ToolItem(
+            title: "محول العملات",
+            subtitle: "حوّل بين العملات بأسعار محدثة",
+            icon: "coloncurrencysign.circle",
+            color: .teal
+        ),
+        ToolItem(
+            title: "حاسبة الذهب والفضة",
+            subtitle: "احسب أسعار الذهب والفضة مباشرة",
+            icon: "sparkles",
+            color: .orange
+        ),
+        ToolItem(
             title: "حاسبة نهاية الخدمة",
             subtitle: "احسب مكافأة نهاية الخدمة وفق نظام العمل السعودي",
             icon: "briefcase.fill",
@@ -583,6 +595,12 @@ struct ToolsView: View {
 
         case "حاسبة التمويل العقاري":
             return "تمويل عقاري قرض عقاري عقار منزل بيت فيلا شقة شراء منزل قسط عقاري رصيد متناقص نسبة سنوية ارباح دفعة اولى دفعة مقدمة بنك بنوك سكني mortgage home finance real estate monthly payment"
+            
+        case "محول العملات":
+            return "محول العملات تحويل عملات صرف عملة سعر الصرف ريال دولار يورو درهم دينار currency converter exchange rate sar usd eur aed kwd fiat"
+            
+        case "حاسبة الذهب والفضة":
+            return "ذهب فضة سعر الذهب سعر الفضة جرام ذهب اونصة ذهب جرام فضة اونصة فضة عيار قيراط سبائك gold silver xau xag precious metals"
 
         case "حاسبة نهاية الخدمة":
             return "نهاية الخدمة مكافأة نهاية الخدمة حقوق العامل حقوق الموظف نظام العمل السعودي استقالة انتهاء عقد انهاء عقد عقد محدد غير محدد راتب اجر فعلي وزارة الموارد البشرية قوى labor end service benefit eosb resignation termination"
