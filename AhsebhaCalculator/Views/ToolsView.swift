@@ -76,6 +76,12 @@ struct ToolsView: View {
             color: .red
         ),
         ToolItem(
+            title: "حاسبة التقاعد",
+            subtitle: "قدّر الأهلية والمدة المتبقية للتقاعد",
+            icon: "person.crop.circle.badge.clock",
+            color: .indigo
+        ),
+        ToolItem(
             title: "حاسبة الضريبة",
             subtitle: "احسب ضريبة القيمة المضافة بسرعة",
             icon: "plus.forwardslash.minus",
@@ -90,6 +96,12 @@ struct ToolsView: View {
     ]
     
     private let generalTools: [ToolItem] = [
+        ToolItem(
+            title: "محول الوحدات",
+            subtitle: "حوّل الطول والوزن والمساحة والحجم والحرارة",
+            icon: "ruler",
+            color: .teal
+        ),
         ToolItem(
             title: "حاسبة النسبة المئوية",
             subtitle: "احسب النسب والزيادات بسهولة",
@@ -596,6 +608,8 @@ struct ToolsView: View {
             CivilRetirementCalculatorView()
         } else if tool.title == "حاسبة التقاعد العسكري" {
             MilitaryRetirementCalculatorView()
+        } else if tool.title == "حاسبة التقاعد" {
+            SaudiRetirementCalculatorView()
         } else if tool.title == "حاسبة العمر" {
             AgeCalculatorView()
         } else if tool.title == "تحويل أسماء الأشهر" {
@@ -604,6 +618,8 @@ struct ToolsView: View {
             DateConverterView()
         } else if tool.title == "حاسبة الفرق بين تاريخين" {
             DateDifferenceCalculatorView()
+        } else if tool.title == "محول الوحدات" {
+            UnitConverterView()
         } else {
             ToolComingSoonView(tool: tool)
         }
@@ -842,6 +858,9 @@ struct ToolsView: View {
 
         case "حاسبة التقاعد العسكري":
             return "تقاعد عسكري معاش تقاعدي عسكري الراتب الأساسي مدة الخدمة سنوات الخدمة أشهر الخدمة جهة عسكرية عجز وفاة بسبب العمل المؤسسة العامة للتأمينات الاجتماعية pension military retirement gosi"
+            
+        case "حاسبة التقاعد":
+            return "تقاعد السعودية التقاعد السعودي اهلية التقاعد التقاعد النظامي التقاعد المبكر التأمينات الاجتماعية التقاعد المدني التقاعد العسكري مدة الاشتراك راتب تقاعدي معاش تقاعدي gosi retirement pension eligibility"
 
         case "حاسبة الضريبة":
             return "ضريبة القيمة المضافة VAT vat tax زكاة دخل فاتورة سعر شامل غير شامل 15 خمسة عشر مالية"
@@ -863,6 +882,9 @@ struct ToolsView: View {
             
         case "حاسبة الفرق بين تاريخين":
             return "فرق بين تاريخين مدة بين تاريخين عدد الايام سنوات اشهر ايام ميلادي هجري ام القرى date difference duration days calendar"
+
+        case "محول الوحدات":
+            return "محول وحدات تحويل وحدات طول وزن مساحة حجم حرارة متر كيلومتر سنتيمتر مليمتر ميل ياردة قدم بوصة كيلوجرام جرام طن رطل اونصة لتر مليلتر متر مكعب جالون كوب مئوية فهرنهايت كلفن unit converter length weight area volume temperature"
 
         default:
             return ""
