@@ -95,6 +95,15 @@ struct ToolsView: View {
         )
     ]
     
+    private let homeServicesTools: [ToolItem] = [
+        ToolItem(
+            title: "حاسبة فاتورة الكهرباء 2027",
+            subtitle: "احسب استهلاك الكهرباء والرسوم والضريبة",
+            icon: "bolt.fill",
+            color: .orange
+        )
+    ]
+
     private let generalTools: [ToolItem] = [
         ToolItem(
             title: "محول الوحدات",
@@ -135,7 +144,7 @@ struct ToolsView: View {
     ]
     
     private var allTools: [ToolItem] {
-        educationTools + financeTools + generalTools
+        educationTools + financeTools + homeServicesTools + generalTools
     }
     
     private var recentToolTitles: [String] {
@@ -201,6 +210,7 @@ struct ToolsView: View {
                             
                             toolSection(title: "الحاسبات التعليمية", icon: "graduationcap.fill", tools: educationTools)
                             toolSection(title: "الحاسبات المالية", icon: "banknote.fill", tools: financeTools)
+                            toolSection(title: "حاسبات الخدمات العامة", icon: "house.and.flag.fill", tools: homeServicesTools)
                             toolSection(title: "الحاسبات العامة", icon: "square.grid.2x2.fill", tools: generalTools)
                             ahsebhaCard
                         }
@@ -596,6 +606,8 @@ struct ToolsView: View {
             PersonalLoanCalculatorView()
         } else if tool.title == "حاسبة التمويل العقاري" {
             MortgageCalculatorView()
+        } else if tool.title == "حاسبة فاتورة الكهرباء 2027" {
+            ElectricityTariff2027CalculatorView()
         } else if tool.title == "محول العملات" {
             CurrencyConverterView()
         } else if tool.title == "حاسبة الذهب والفضة" {
@@ -784,7 +796,7 @@ struct ToolsView: View {
     }
     
     private func sectionShouldHaveSurface(_ title: String) -> Bool {
-        title == "الحاسبات التعليمية" || title == "الحاسبات المالية" || title == "الحاسبات العامة"
+        title == "الحاسبات التعليمية" || title == "الحاسبات المالية" || title == "حاسبات الخدمات العامة" || title == "الحاسبات العامة"
     }
     
     private func sectionBackground(for title: String) -> Color {
@@ -797,6 +809,8 @@ struct ToolsView: View {
             return Color(hex: "#F4F7FF")
         case "الحاسبات المالية":
             return Color(hex: "#F3FBF7")
+        case "حاسبات الخدمات العامة":
+            return Color(hex: "#FFF8EF")
         case "الحاسبات العامة":
             return Color(hex: "#F8F5FF")
         default:
@@ -814,6 +828,8 @@ struct ToolsView: View {
             return Color(hex: "#3B73E6")
         case "الحاسبات المالية":
             return Color(hex: "#1A936F")
+        case "حاسبات الخدمات العامة":
+            return AppTheme.buttonOrange
         case "الحاسبات العامة":
             return Color(hex: "#7C5CE6")
         case "أدواتك المفضلة":
@@ -840,7 +856,10 @@ struct ToolsView: View {
 
         case "حاسبة التمويل العقاري":
             return "تمويل عقاري قرض عقاري عقار منزل بيت فيلا شقة شراء منزل قسط عقاري رصيد متناقص نسبة سنوية ارباح دفعة اولى دفعة مقدمة بنك بنوك سكني mortgage home finance real estate monthly payment"
-            
+
+        case "حاسبة فاتورة الكهرباء 2027":
+            return "الكهرباء فاتورة الكهرباء استهلاك كيلوواط قاطع أمبير تعرفة 2027 رسوم الكهرباء ضريبة الكهرباء electricity kwh"
+
         case "محول العملات":
             return "محول العملات تحويل عملات صرف عملة سعر الصرف ريال دولار يورو درهم دينار currency converter exchange rate sar usd eur aed kwd fiat"
             
