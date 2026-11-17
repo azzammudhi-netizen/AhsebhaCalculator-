@@ -200,7 +200,7 @@ struct UnitConverterView: View {
     }
 
     private var unitSelectionRow: some View {
-        ZStack {
+        VStack(spacing: 12) {
             HStack(spacing: 10) {
                 unitPickerCard(title: "من وحدة", unit: $fromUnit, tint: .blue)
                 unitPickerCard(title: "إلى وحدة", unit: $toUnit, tint: .teal)
@@ -231,18 +231,37 @@ struct UnitConverterView: View {
         VStack(alignment: .center, spacing: 8) {
             inputTitle(title, icon: "chevron.down.circle.fill", tint: tint)
 
-            Picker(title, selection: unit) {
+            Menu {
                 ForEach(selectedCategory.units) { option in
-                    Text(option.name).tag(option)
+                    Button {
+                        unit.wrappedValue = option
+                    } label: {
+                        Text(option.name)
+                    }
                 }
+            } label: {
+                HStack(spacing: 6) {
+                    Text(unit.wrappedValue.name)
+                        .font(.system(size: 14, weight: .bold, design: .rounded))
+                        .foregroundColor(AppTheme.primaryText)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                        .truncationMode(.tail)
+                        .frame(maxWidth: .infinity, alignment: .center)
+
+                    Image(systemName: "chevron.down")
+                        .font(.system(size: 11, weight: .black))
+                        .foregroundColor(tint)
+                        .fixedSize()
+                }
+                .environment(\.layoutDirection, .rightToLeft)
+                .padding(.vertical, 12)
+                .padding(.horizontal, 10)
+                .frame(maxWidth: .infinity)
+                .background(innerBackground(tint))
+                .clipShape(RoundedRectangle(cornerRadius: 17, style: .continuous))
             }
-            .pickerStyle(.menu)
-            .tint(tint)
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 12)
-            .padding(.horizontal, 8)
-            .background(innerBackground(tint))
-            .clipShape(RoundedRectangle(cornerRadius: 17, style: .continuous))
+            .buttonStyle(.plain)
         }
         .frame(maxWidth: .infinity)
     }
