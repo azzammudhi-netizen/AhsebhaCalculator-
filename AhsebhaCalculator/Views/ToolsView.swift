@@ -101,6 +101,12 @@ struct ToolsView: View {
             subtitle: "احسب استهلاك الكهرباء والرسوم والضريبة",
             icon: "bolt.fill",
             color: .orange
+        ),
+        ToolItem(
+            title: "حاسبة فاتورة المياه 2027",
+            subtitle: "احسب استهلاك المياه والصرف الصحي والرسوم والضريبة",
+            icon: "drop.fill",
+            color: .teal
         )
     ]
 
@@ -608,6 +614,8 @@ struct ToolsView: View {
             MortgageCalculatorView()
         } else if tool.title == "حاسبة فاتورة الكهرباء 2027" {
             ElectricityTariff2027CalculatorView()
+        } else if tool.title == "حاسبة فاتورة المياه 2027" {
+            WaterBill2027CalculatorView()
         } else if tool.title == "محول العملات" {
             CurrencyConverterView()
         } else if tool.title == "حاسبة الذهب والفضة" {
@@ -859,6 +867,9 @@ struct ToolsView: View {
 
         case "حاسبة فاتورة الكهرباء 2027":
             return "الكهرباء فاتورة الكهرباء استهلاك كيلوواط قاطع أمبير تعرفة 2027 رسوم الكهرباء ضريبة الكهرباء electricity kwh"
+
+        case "حاسبة فاتورة المياه 2027":
+            return "المياه الماء فاتورة المياه صرف صحي الصرف الصحي استهلاك المياه متر مكعب عداد المياه تعرفة المياه تعرفة 2027 water sewer water bill"
 
         case "محول العملات":
             return "محول العملات تحويل عملات صرف عملة سعر الصرف ريال دولار يورو درهم دينار currency converter exchange rate sar usd eur aed kwd fiat"

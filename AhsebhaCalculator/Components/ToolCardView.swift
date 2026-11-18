@@ -128,6 +128,8 @@ struct ToolCardView: View {
             MortgageCalculatorView()
         } else if tool.title == "حاسبة فاتورة الكهرباء 2027" {
             ElectricityTariff2027CalculatorView()
+        } else if tool.title == "حاسبة فاتورة المياه 2027" {
+            WaterBill2027CalculatorView()
         } else if tool.title == "محول العملات" {
             CurrencyConverterView()
         } else if tool.title == "حاسبة الذهب والفضة" {
