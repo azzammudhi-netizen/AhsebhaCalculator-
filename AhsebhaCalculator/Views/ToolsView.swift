@@ -107,6 +107,12 @@ struct ToolsView: View {
             subtitle: "احسب استهلاك المياه والصرف الصحي والرسوم والضريبة",
             icon: "drop.fill",
             color: .teal
+        ),
+        ToolItem(
+            title: "حاسبة رسوم توصيل المياه والصرف الصحي",
+            subtitle: "احسب رسوم توصيل خدمات المياه والصرف الصحي إلى العقار",
+            icon: "house.lodge.fill",
+            color: .blue
         )
     ]
 
@@ -616,6 +622,8 @@ struct ToolsView: View {
             ElectricityTariff2027CalculatorView()
         } else if tool.title == "حاسبة فاتورة المياه 2027" {
             WaterBill2027CalculatorView()
+        } else if tool.title == "حاسبة رسوم توصيل المياه والصرف الصحي" {
+            WaterConnectionCalculatorView()
         } else if tool.title == "محول العملات" {
             CurrencyConverterView()
         } else if tool.title == "حاسبة الذهب والفضة" {
@@ -870,6 +878,9 @@ struct ToolsView: View {
 
         case "حاسبة فاتورة المياه 2027":
             return "المياه الماء فاتورة المياه صرف صحي الصرف الصحي استهلاك المياه متر مكعب عداد المياه تعرفة المياه تعرفة 2027 water sewer water bill"
+
+        case "حاسبة رسوم توصيل المياه والصرف الصحي":
+            return "رسوم التوصيل توصيل المياه توصيل الصرف الصحي اتصال المياه عداد جديد المياه الصرف الصحي مساحة البناء وحدات سكنية water connection sewer connection connection fees"
 
         case "محول العملات":
             return "محول العملات تحويل عملات صرف عملة سعر الصرف ريال دولار يورو درهم دينار currency converter exchange rate sar usd eur aed kwd fiat"

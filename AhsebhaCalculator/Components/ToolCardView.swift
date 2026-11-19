@@ -130,6 +130,8 @@ struct ToolCardView: View {
             ElectricityTariff2027CalculatorView()
         } else if tool.title == "حاسبة فاتورة المياه 2027" {
             WaterBill2027CalculatorView()
+        } else if tool.title == "حاسبة رسوم توصيل المياه والصرف الصحي" {
+            WaterConnectionCalculatorView()
         } else if tool.title == "محول العملات" {
             CurrencyConverterView()
         } else if tool.title == "حاسبة الذهب والفضة" {
